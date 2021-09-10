@@ -3,52 +3,54 @@ const secondsDisplay = document.getElementById('secondsDisplay');
 const millisecondsDisplay = document.getElementById('millisecondsDisplay');
 const startStopButton = document.getElementById('startStopButton');
 const resetLapButton = document.getElementById('resetLapButton');
+const zeroDate = new Date();
+zeroDate.setMilliseconds(0);
+zeroDate.setSeconds(0);
+zeroDate.setMinutes(0);
 let startTime = 0;
 let savedTime = 0;
+let lapCounter = 0;
+let laps = [];
 let timerRef = null;
 
 const initialise = () => {
     resetLapButton.onclick = resetTimer;
     startStopButton.onclick = startTimer;
-    const freshTime = {
-        milliseconds: 0,
-        seconds: 0,
-        minutes: 0
-    }
-    setClockTime(freshTime);
+    setClockTime(zeroDate);
+    createLap();
+    createLap();
 }
 
-const setClockTime = (newTime) => {
+const setClockTime = (timeElapsed) => {
     let displayString = "";
-    if(newTime.milliseconds < 100) {
+    const milliseconds = timeElapsed.getMilliseconds();
+    const seconds = timeElapsed.getSeconds();
+    const minutes = timeElapsed.getMinutes();
+    if(milliseconds < 100) {
         displayString = "0";
     }
-    millisecondsDisplay.innerHTML = displayString + Math.round(newTime.milliseconds/10);
+    millisecondsDisplay.innerHTML = displayString + Math.round(milliseconds/10);
     displayString = "";
-    if(newTime.seconds < 10) {
+    if(seconds < 10) {
         displayString = "0";
     }
-    secondsDisplay.innerHTML = displayString + newTime.seconds + ".";
+    secondsDisplay.innerHTML = displayString + seconds + ".";
     displayString = "";
-    if(newTime.minutes < 10) {
+    if(minutes < 10) {
         displayString = "0";
     }
-    minutesDisplay.innerHTML = displayString + newTime.minutes + ":";
+    minutesDisplay.innerHTML = displayString + minutes + ":";
 }
 
 const startTimer = () => {
     startTime = Date.now();
     timerRef = setInterval(() => {
-        const newTime = {};
         const currentTime = Date.now();
         const timeElapsed = new Date(savedTime + currentTime - startTime);
-        newTime.minutes = timeElapsed.getMinutes();
-        newTime.seconds = timeElapsed.getSeconds();
-        newTime.milliseconds = timeElapsed.getMilliseconds();
-        setClockTime(newTime);
+        setClockTime(timeElapsed);
     })
     changeButton("Stop", stopTimer, startStopButton);
-    changeButton("Lap", null, resetLapButton);
+    changeButton("Lap", createLap, resetLapButton);
 }
 
 changeButton = (label, func, el) => {
@@ -64,18 +66,28 @@ const stopTimer = () => {
 }
 
 const resetTimer = () => {
-    savedTime += 0;
+    savedTime = 0;
     clearInterval(timerRef);
-    const freshTimer = {
-        milliseconds: 0,
-        seconds: 0,
-        minutes: 0
-    }
-    setClockTime(freshTimer);
+    laps.forEach((lap) => {lapView.removeChild(lap)});
+    laps.length = 0;
+    lapCounter = 0;
+    setClockTime(zeroDate);
 }
 
-const resetClockDisplay = () => {
-    setClockTime(clockTime);
+const createLap = () => {
+    lapCounter++;
+    const lapView = document.getElementById('lapView');
+    const lapBox = document.createElement('div');
+    const lapLabelParagraph = document.createElement('p');
+    const lapTimeParagraph = document.createElement('p');
+    const lapLabelText = document.createTextNode("Lap " + lapCounter);
+    const lapTimeText = document.createTextNode('00:00.00');
+    lapLabelParagraph.appendChild(lapLabelText);
+    lapTimeParagraph.appendChild(lapTimeText);
+    lapBox.appendChild(lapLabelParagraph);
+    lapBox.appendChild(lapTimeParagraph);
+    laps.push(lapBox);
+    lapView.appendChild(lapBox);
 }
 
 initialise();

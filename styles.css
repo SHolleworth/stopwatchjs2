@@ -15,6 +15,7 @@ h1, p {
     justify-content: center;
     width: 500px;
     height: 832px;
+    padding: 20px;
     background-color: black;
 }
 
@@ -35,7 +36,6 @@ h1, p {
     flex: .5;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
 }
 
 .buttonBackground {
@@ -68,6 +68,20 @@ h1, p {
     color: lightgrey;
 }
 
-#lapBox {
+#lapView {
     flex: 1;
+}
+
+#lapView div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-color: grey;
+    width: '100%';
+}
+
+#lapView div p {
+    color: white;
 }
