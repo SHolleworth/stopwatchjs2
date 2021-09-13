@@ -69,6 +69,7 @@ h1, p {
 }
 
 #lapView {
+    overflow: auto;
     flex: 1;
 }
 
@@ -82,6 +83,14 @@ h1, p {
     width: '100%';
 }
 
-#lapView div p {
+#lapView .normalLap p {
     color: white;
+}
+
+#lapView .fastLap p {
+    color: green;
+}
+
+#lapView .slowLap p {
+    color: red;
 }
