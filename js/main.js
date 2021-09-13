@@ -19,6 +19,7 @@ slowLap.classList.add('slowLap');
 let lapCounter = 0;
 let laps = [];
 let timerRef = null;
+let running = false;
 
 const initialise = () => {
     resetLapButton.onclick = resetTimer;
@@ -55,27 +56,34 @@ const startTimer = () => {
     lapStartTime = Date.now();
     if(!laps.length)
         createLap();
-    timerRef = setInterval(() => {
+    running = true;
+    runTimerAnimation();
+    changeButton("Stop", 'startButton', 'stopButton', stopTimer, startStopButton);
+    changeButton("Lap", null, null, createLap, resetLapButton);
+}
+
+const runTimerAnimation = () => {
+    if(running) {
         const mainTimerDateObject = new Date(getElapsedMainTimeInMilliseconds());
         lapTimerDateObject = new Date(getElapsedLapTimeInMilliseconds());
         setMainTimerDisplay(formatDateToString(mainTimerDateObject));
         setActiveLapTimeParagraphNode(formatDateToString(lapTimerDateObject));
-    }, 16)
-    changeButton("Stop", stopTimer, startStopButton);
-    changeButton("Lap", createLap, resetLapButton);
+        requestAnimationFrame(runTimerAnimation);
+    }
 }
 
-const changeButton = (label, func, button) => {
-    button.childNodes[0].innerHTML = label;
+const changeButton = (label, oldClass, newClass, func, button) => {
+    button.children[0].children[0].innerHTML = label;
     button.onclick = func;
+    button.classList.replace(oldClass, newClass);
 }
 
 const stopTimer = () => {
     mainSavedTime = getElapsedMainTimeInMilliseconds();
     lapSavedTime = getElapsedLapTimeInMilliseconds();
-    clearInterval(timerRef);
-    changeButton("Start", startTimer, startStopButton);
-    changeButton("Reset", resetTimer, resetLapButton);
+    running = false;
+    changeButton("Start", "stopButton", "startButton", startTimer, startStopButton);
+    changeButton("Reset", null, null, resetTimer, resetLapButton);
 }
 
 const resetTimer = () => {

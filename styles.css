@@ -3,6 +3,10 @@ h1, p {
     font-weight: 100;
 }
 
+p {
+    font-size: 1.4rem;
+}
+
 #container {
     width: '100%';
     height: '100%';
@@ -13,8 +17,8 @@ h1, p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 500px;
-    height: 832px;
+    width: 621px;
+    height: 1344px;
     padding: 20px;
     background-color: black;
 }
@@ -27,7 +31,7 @@ h1, p {
 }
 
 #clockBox h1 {
-    font-size: 7em;
+    font-size: 9em;
     color: white;
 }
 
@@ -38,39 +42,58 @@ h1, p {
     align-items: center;
 }
 
+.buttonCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 8rem;
+    height: 8rem;
+    border: solid 3px black;
+    border-radius: 50%;
+}
+
 .buttonBackground {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100px;
-    height: 100px;
-    border-radius: 50px;
-    background-color: brown;
+    width: 9rem;
+    height: 9rem;
+    border-radius: 5rem;
+    border-width: 0;
 }
 
-.buttonBackground p {
-    font-size: 1.3em;
+button p {
+    font-weight: bold;
 }
 
-#startStopButton {
-    background-color: darkgreen;
+.startButton {
+    background-color: rgba(81, 194, 111, .25);
 }
 
-#startStopButton p {
+.stopButton {
+    background-color: rgba(232, 28, 28, .20);
+}
+
+.startButton p {
     color: lightgreen;
 }
 
+.stopButton p {
+    color: red
+}
+
 #resetLapButton {
-    background-color: grey;
+    background-color: rgba(232, 232, 232, .25);
 }
 
 #resetLapButton p {
-    color: lightgrey;
+    color: white;
 }
 
 #lapView {
     overflow: auto;
     flex: 1;
+    scrollbar-width: 50px;
 }
 
 #lapView div {
@@ -79,7 +102,7 @@ h1, p {
     justify-content: space-between;
     border-top-width: 1px;
     border-top-style: solid;
-    border-color: grey;
+    border-color: rgba(255, 255, 255, .2);
     width: '100%';
 }
 
@@ -88,7 +111,7 @@ h1, p {
 }
 
 #lapView .fastLap {
-    color: green;
+    color: lightgreen;
 }
 
 #lapView .slowLap {
