@@ -83,14 +83,18 @@ h1, p {
     width: '100%';
 }
 
-#lapView .normalLap p {
+#lapView .normalLap {
     color: white;
 }
 
-#lapView .fastLap p {
+#lapView .fastLap {
     color: green;
 }
 
-#lapView .slowLap p {
+#lapView .slowLap {
     color: red;
+}
+
+#lapView .mask {
+    color: white;
 }

@@ -10,10 +10,8 @@ let mainStartTime = 0;
 let lapStartTime = 0;
 let mainSavedTime = 0;
 let lapSavedTime = 0;
-// let fastestLap = {time: Infinity, lapBox: null};
-// let slowestLap = {time: -Infinity, lapBox: null};
-let fastestLapTime = Infinity;//TODO add slow and fast colours to lap times.
-let slowestLapTime = -Infinity;//////
+let fastestLapTime = Infinity;
+let slowestLapTime = -Infinity;
 let fastLap = document.createElement('div');
 fastLap.classList.add('fastLap');
 let slowLap = document.createElement('div');
@@ -100,7 +98,6 @@ const createLap = () => {
         recordLapTime();
         updateFastestAndSlowestLaps();
     }
-
     lapStartTime = Date.now();
     const lapView = document.getElementById('lapView');
     const lapBox = document.createElement('div');
@@ -141,6 +138,14 @@ const updateFastestAndSlowestLaps = () => {
             fastLap.classList.replace("fastLap", "normalLap");
         laps[0].lapBox.classList.replace("normalLap", "fastLap");
         fastestLapTime = laps[0].time;
+    }
+    if(laps.length < 2) {
+        laps[0].lapBox.classList.add('mask');
+    }
+    else {
+        Array.from(document.getElementsByClassName('mask')).forEach((lap) => {
+            lap.classList.remove('mask');
+        })
     }
 }
 
