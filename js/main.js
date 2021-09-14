@@ -12,19 +12,19 @@ let mainSavedTime = 0;
 let lapSavedTime = 0;
 let fastestLapTime = Infinity;
 let slowestLapTime = -Infinity;
-let fastLap = document.createElement('div');
-fastLap.classList.add('fastLap');
-let slowLap = document.createElement('div');
-slowLap.classList.add('slowLap');
+let fastLapBox = document.createElement('div');
+fastLapBox.classList.add('fastLap');
+let slowLapBox = document.createElement('div');
+slowLapBox.classList.add('slowLap');
 let lapCounter = 0;
+let animationRequestId = null;
 let laps = [];
-let timerRef = null;
 let running = false;
 
 const initialise = () => {
     resetLapButton.onclick = resetTimer;
     startStopButton.onclick = startTimer;
-    setMainTimerDisplay(formatDateToString(zeroDate))
+    setMainTimerDisplay(formatDateToString(zeroDate));
 }
 
 const getElapsedMainTimeInMilliseconds = () => {
@@ -40,7 +40,7 @@ const setMainTimerDisplay = (timerDisplayString) => {
 }
 
 const formatDateToString = (dateObject) => {
-    return `${padTime(dateObject.getMinutes() + '')}:${padTime(dateObject.getSeconds() + '')}.${padTime(Math.round(dateObject.getMilliseconds()/10) + '')}`
+    return `${padTime(dateObject.getMinutes() + '')}:${padTime(dateObject.getSeconds() + '')}.${padTime(Math.round(dateObject.getMilliseconds()/10) + '')}`;
 }
 
 const padTime = (time) => {
@@ -56,24 +56,21 @@ const startTimer = () => {
     lapStartTime = Date.now();
     if(!laps.length)
         createLap();
-    running = true;
-    runTimerAnimation();
+    animationRequestId = runTimerAnimation();
     changeButton("Stop", 'startButton', 'stopButton', stopTimer, startStopButton);
     changeButton("Lap", null, null, createLap, resetLapButton);
 }
 
 const runTimerAnimation = () => {
-    if(running) {
-        const mainTimerDateObject = new Date(getElapsedMainTimeInMilliseconds());
-        lapTimerDateObject = new Date(getElapsedLapTimeInMilliseconds());
-        setMainTimerDisplay(formatDateToString(mainTimerDateObject));
-        setActiveLapTimeParagraphNode(formatDateToString(lapTimerDateObject));
-        requestAnimationFrame(runTimerAnimation);
-    }
+    const mainTimerDateObject = new Date(getElapsedMainTimeInMilliseconds());
+    lapTimerDateObject = new Date(getElapsedLapTimeInMilliseconds());
+    setMainTimerDisplay(formatDateToString(mainTimerDateObject));
+    setActiveLapTimeParagraphNode(formatDateToString(lapTimerDateObject));
+    animationRequestId = requestAnimationFrame(runTimerAnimation);
 }
 
 const changeButton = (label, oldClass, newClass, func, button) => {
-    button.children[0].children[0].innerHTML = label;
+    button.children[0].innerHTML = label;
     button.onclick = func;
     button.classList.replace(oldClass, newClass);
 }
@@ -81,14 +78,13 @@ const changeButton = (label, oldClass, newClass, func, button) => {
 const stopTimer = () => {
     mainSavedTime = getElapsedMainTimeInMilliseconds();
     lapSavedTime = getElapsedLapTimeInMilliseconds();
-    running = false;
+    cancelAnimationFrame(animationRequestId);
     changeButton("Start", "stopButton", "startButton", startTimer, startStopButton);
     changeButton("Reset", null, null, resetTimer, resetLapButton);
 }
 
 const resetTimer = () => {
     mainSavedTime = 0;
-    clearInterval(timerRef);
     laps.forEach((lap) => {lapView.removeChild(lap.lapBox)});
     laps.length = 0;
     lapCounter = 0;
@@ -116,6 +112,8 @@ const createLap = () => {
 
     lapLabelParagraph.appendChild(lapLabelText);
     lapTimeParagraph.appendChild(lapTimeText);
+    lapTimeParagraph.classList.add('lapTimeParagraph');
+    lapLabelParagraph.classList.add('lapLabelParagraph');
 
     lapBox.appendChild(lapLabelParagraph);
     lapBox.appendChild(lapTimeParagraph);
@@ -141,7 +139,7 @@ const updateFastestAndSlowestLaps = () => {
         laps[0].lapBox.classList.replace("normalLap", "slowLap");
         slowestLapTime = laps[0].time;
     }
-    if(laps[0].time < fastestLapTime) {
+    else if(laps[0].time < fastestLapTime) {
         if(fastLap)
             fastLap.classList.replace("fastLap", "normalLap");
         laps[0].lapBox.classList.replace("normalLap", "fastLap");

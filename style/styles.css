@@ -1,0 +1,199 @@
+:root{
+    --scrollbar-thumb-color: rgba(255, 255, 255, .2);
+    --scrollbar-thumb-hover-color: rgba(255, 255, 255, .4);
+    --scrollbar-thumb-active-color: rgba(255, 255, 255, .8);
+    --lap-border-color: rgba(255, 255, 255, .1);
+    --normal-lap-color: white;
+    --fast-lap-color: lightgreen;
+    --slow-lap-color: rgba(255, 0, 0, 1);
+    --start-button-p-color: lightgreen;
+    --stop-button-p-color: red;
+    --reset-lap-button-p-color: white;
+    --start-button-color: rgba(81, 194, 111, .25); 
+    --start-button-active-color: rgba(81, 194, 111, .1);
+    --start-button-hover-color: rgba(81, 194, 111, .3);
+    --stop-button-color: rgba(232, 28, 28, .20);
+    --stop-button-active-color: rgba(232, 28, 28, .1);
+    --stop-button-hover-color: rgba(232, 28, 28, .3);
+    --reset-lap-color: rgba(232, 232, 232, .25);
+    --reset-lap-active-color: rgba(232, 232, 232, .1);
+    --reset-lap-hover-color: rgba(232, 232, 232, .3);
+    --shadow-color: rgba(0, 0, 0, .2);
+}
+
+h1 {
+    font-family: 'SF Pro Display Ultralight', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 50;
+}
+
+p {
+    font-family: 'SF Pro Text Thin', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: .75rem;
+    font-weight: bold;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+#background {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+    height: 600px;
+    padding: 10px;
+    padding-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: -5px 5px 5px var(--shadow-color);
+    background-color: black;
+}
+
+#clockBox {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex: .9;
+}
+
+#clockBox h1 {
+    font-size: 4.5rem;
+    color: white;
+}
+
+#buttonBox {
+    display: flex;
+    flex: .3;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.buttonBackground {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    border: double 5px black;
+}
+
+.startButton {
+    background-color: var(--start-button-color);
+}
+
+.startButton:hover {
+    background-color: var(--start-button-hover-color);
+}
+
+.startButton:active {
+    background-color: var(--start-button-active-color);
+}
+
+.stopButton {
+    background-color: var(--stop-button-color);
+}
+
+.stopButton:hover {
+    background-color: var(--stop-button-hover-color);
+}
+
+.stopButton:active {
+    background-color: var(--stop-button-active-color)
+}
+
+.startButton p {
+    color: var(--start-button-p-color);
+}
+
+.stopButton p {
+    color: var(--stop-button-p-color);
+}
+
+#resetLapButton {
+    background-color: var(--reset-lap-color);
+}
+
+#resetLapButton:hover {
+    background-color: var(--reset-lap-hover-color);
+}
+
+#resetLapButton:active {
+    background-color: var(--reset-lap-active-color);
+}
+
+#resetLapButton p {
+    color: var(--reset-lap-button-p-color);
+}
+
+#lapView {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-color: var(--lap-border-color);
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+}
+
+#lapView::-webkit-scrollbar {
+
+    position: absolute;
+    width: 3px;
+}
+
+#lapView::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-color);
+    border-radius: 1px;
+    opacity: .5;
+}
+
+#lapView::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover-color);
+}
+
+#lapView::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-active-color);
+}
+
+#lapView div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 0 10px;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-color: var(--lap-border-color);
+    width: '100%';
+    height: 35px;
+}
+
+#lapView div p {
+    display: inline-block;
+    font-weight: bold;
+}
+
+.lapTimeParagraph {
+    float: right;
+}
+
+#lapView .normalLap {
+    color: var(--normal-lap-color);
+}
+
+#lapView .fastLap {
+    color: var(--fast-lap-color);
+}
+
+#lapView .slowLap {
+    color: var(--slow-lap-color);
+}
+
+#lapView .mask {
+    color: var(--normal-lap-color);
+}
