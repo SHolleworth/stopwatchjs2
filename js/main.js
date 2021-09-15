@@ -1,6 +1,7 @@
-const mainTimerDisplay = document.getElementById('mainTimerDisplay');
-const startStopButton = document.getElementById('startStopButton');
-const resetLapButton = document.getElementById('resetLapButton');
+const mainTimerDisplay = document.getElementById('main-timer-display');
+const startStopButton = document.getElementById('start-stop-button');
+const resetLapButton = document.getElementById('reset-lap-button');
+const lapView = document.getElementById('lap-view');
 let lapTimerDateObject = new Date();
 const zeroDate = new Date();
 zeroDate.setMilliseconds(0);
@@ -12,10 +13,6 @@ let mainSavedTime = 0;
 let lapSavedTime = 0;
 let fastestLapTime = Infinity;
 let slowestLapTime = -Infinity;
-let fastLapBox = document.createElement('div');
-fastLapBox.classList.add('fastLap');
-let slowLapBox = document.createElement('div');
-slowLapBox.classList.add('slowLap');
 let lapCounter = 0;
 let animationRequestId = null;
 let laps = [];
@@ -39,6 +36,10 @@ const setMainTimerDisplay = (timerDisplayString) => {
     mainTimerDisplay.innerHTML = timerDisplayString;
 }
 
+const setActiveLapTimeDisplay = (lapTimeElapsed) => {
+    document.getElementById('lap-view').children[0].children[1].innerHTML = lapTimeElapsed;
+}
+
 const formatDateToString = (dateObject) => {
     return `${padTime(dateObject.getMinutes() + '')}:${padTime(dateObject.getSeconds() + '')}.${padTime(Math.round(dateObject.getMilliseconds()/10) + '')}`;
 }
@@ -47,17 +48,13 @@ const padTime = (time) => {
     return time.padStart(2, '0');
 }
 
-const setActiveLapTimeParagraphNode = (lapTimeElapsed) => {
-    document.getElementById('lapView').children[0].children[1].innerHTML = lapTimeElapsed;
-}
-
 const startTimer = () => {
     mainStartTime = Date.now();
     lapStartTime = Date.now();
     if(!laps.length)
         createLap();
     animationRequestId = runTimerAnimation();
-    changeButton("Stop", 'startButton', 'stopButton', stopTimer, startStopButton);
+    changeButton("Stop", "button--start-color", "button--stop-color", stopTimer, startStopButton);
     changeButton("Lap", null, null, createLap, resetLapButton);
 }
 
@@ -65,7 +62,7 @@ const runTimerAnimation = () => {
     const mainTimerDateObject = new Date(getElapsedMainTimeInMilliseconds());
     lapTimerDateObject = new Date(getElapsedLapTimeInMilliseconds());
     setMainTimerDisplay(formatDateToString(mainTimerDateObject));
-    setActiveLapTimeParagraphNode(formatDateToString(lapTimerDateObject));
+    setActiveLapTimeDisplay(formatDateToString(lapTimerDateObject));
     animationRequestId = requestAnimationFrame(runTimerAnimation);
 }
 
@@ -79,7 +76,7 @@ const stopTimer = () => {
     mainSavedTime = getElapsedMainTimeInMilliseconds();
     lapSavedTime = getElapsedLapTimeInMilliseconds();
     cancelAnimationFrame(animationRequestId);
-    changeButton("Start", "stopButton", "startButton", startTimer, startStopButton);
+    changeButton("Start", "button--stop-color", "button--start-color", startTimer, startStopButton);
     changeButton("Reset", null, null, resetTimer, resetLapButton);
 }
 
@@ -103,7 +100,14 @@ const createLap = () => {
         updateFastestAndSlowestLaps();
     }
     lapStartTime = Date.now();
-    const lapView = document.getElementById('lapView');
+    const lapBox = createLapBox()
+    laps.unshift({splitTime: null, lapBox: lapBox});
+    lapView.prepend(lapBox);
+    lapCounter++;
+    lapSavedTime = 0;
+}
+
+const createLapBox = () => {
     const lapBox = document.createElement('div');
     const lapLabelParagraph = document.createElement('p');
     const lapTimeParagraph = document.createElement('p');
@@ -112,45 +116,39 @@ const createLap = () => {
 
     lapLabelParagraph.appendChild(lapLabelText);
     lapTimeParagraph.appendChild(lapTimeText);
-    lapTimeParagraph.classList.add('lapTimeParagraph');
-    lapLabelParagraph.classList.add('lapLabelParagraph');
+    lapTimeParagraph.classList.add('lap-box__text');
+    lapLabelParagraph.classList.add('lap-box__text');
 
     lapBox.appendChild(lapLabelParagraph);
     lapBox.appendChild(lapTimeParagraph);
-    lapBox.classList.add('normalLap');
+    lapBox.classList.add('lap-box');
 
-    laps.unshift({time: null, lapBox: lapBox});
-    lapView.prepend(lapBox);
-    
-    lapCounter++;
-    lapSavedTime = 0;
+    return lapBox;
 }
 
 const recordLapTime = () => {
-    laps[0].time = getElapsedLapTimeInMilliseconds();
+    laps[0].splitTime = getElapsedLapTimeInMilliseconds();
 }
 
 const updateFastestAndSlowestLaps = () => {
-    const slowLap = document.getElementsByClassName('slowLap')[0];
-    const fastLap = document.getElementsByClassName('fastLap')[0];
-    if(laps[0].time > slowestLapTime) {
-        if(slowLap)
-            slowLap.classList.replace("slowLap", "normalLap");
-        laps[0].lapBox.classList.replace("normalLap", "slowLap");
-        slowestLapTime = laps[0].time;
+    const slowLap = document.getElementsByClassName('lap-box--slow-color')[0];
+    const fastLap = document.getElementsByClassName('lap-box--fast-color')[0];
+    if(laps[0].splitTime > slowestLapTime) {
+        slowLap?.classList.remove("lap-box--slow-color");
+        laps[0].lapBox.classList.add("lap-box--slow-color");
+        slowestLapTime = laps[0].splitTime;
     }
-    else if(laps[0].time < fastestLapTime) {
-        if(fastLap)
-            fastLap.classList.replace("fastLap", "normalLap");
-        laps[0].lapBox.classList.replace("normalLap", "fastLap");
-        fastestLapTime = laps[0].time;
+    if(laps[0].splitTime < fastestLapTime) {
+        fastLap?.classList.remove("lap-box--fast-color");
+        laps[0].lapBox.classList.add("lap-box--fast-color");
+        fastestLapTime = laps[0].splitTime;
     }
     if(laps.length < 2) {
-        laps[0].lapBox.classList.add('mask');
+        laps[0].lapBox.classList.add('lap-box--mask-color');
     }
     else {
-        Array.from(document.getElementsByClassName('mask')).forEach((lap) => {
-            lap.classList.remove('mask');
+        Array.from(document.getElementsByClassName('lap-box--mask-color')).forEach((lap) => {
+            lap.classList.remove('lap-box--mask-color');
         })
     }
 }
