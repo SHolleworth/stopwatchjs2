@@ -2,6 +2,7 @@ const mainTimerDisplay = document.getElementById('main-timer-display');
 const startStopButton = document.getElementById('start-stop-button');
 const resetLapButton = document.getElementById('reset-lap-button');
 const lapView = document.getElementById('lap-view');
+let emptyLapBoxes = [];
 let lapTimerDateObject = new Date();
 const zeroDate = new Date();
 zeroDate.setMilliseconds(0);
@@ -10,18 +11,43 @@ zeroDate.setMinutes(0);
 let mainStartTime = 0;
 let lapStartTime = 0;
 let mainSavedTime = 0;
-let lapSavedTime = 0;
+let activeLapSavedTime = 0;
 let fastestLapTime = Infinity;
 let slowestLapTime = -Infinity;
 let lapCounter = 0;
 let animationRequestId = null;
 let laps = [];
 let running = false;
+const buttonNames = {
+    START: 0,
+    STOP: 1,
+    RESET: 2,
+    LAP: 3
+};
+Object.freeze(buttonNames);
+
+startStopButton.onclick = () => { running ? stopTimer() : startTimer() }
+resetLapButton.onclick = () => { running ? createLap() : resetTimer() }
 
 const initialise = () => {
-    resetLapButton.onclick = resetTimer;
-    startStopButton.onclick = startTimer;
+    createEmptyLapBoxes()
     setMainTimerDisplay(formatDateToString(zeroDate));
+}
+
+const createEmptyLapBoxes = () => {
+    emptyLapBoxes.length ? clearRemainingEmptyLapBoxes() : null;
+    for(let i = 0; i < 7; i++) {
+        const emptyLapBox = document.createElement('div');
+        emptyLapBox.classList.add('lap-box', 'lap-box--empty');
+        lapView.appendChild(emptyLapBox);
+    }
+    emptyLapBoxes = document.getElementsByClassName('lap-box--empty');
+}
+
+const clearRemainingEmptyLapBoxes = () => {
+    Array.from(emptyLapBoxes).forEach((emptyLapBox) => {
+        lapView.removeChild(emptyLapBox);
+    })
 }
 
 const getElapsedMainTimeInMilliseconds = () => {
@@ -29,7 +55,7 @@ const getElapsedMainTimeInMilliseconds = () => {
 }
 
 const getElapsedLapTimeInMilliseconds = () => {
-    return Date.now() + lapSavedTime - lapStartTime;
+    return Date.now() + activeLapSavedTime - lapStartTime;
 }
 
 const setMainTimerDisplay = (timerDisplayString) => {
@@ -37,11 +63,11 @@ const setMainTimerDisplay = (timerDisplayString) => {
 }
 
 const setActiveLapTimeDisplay = (lapTimeElapsed) => {
-    document.getElementById('lap-view').children[0].children[1].innerHTML = lapTimeElapsed;
+    document.getElementsByClassName('lap-box__active-time')[0].innerHTML = lapTimeElapsed;
 }
 
 const formatDateToString = (dateObject) => {
-    return `${padTime(dateObject.getMinutes() + '')}:${padTime(dateObject.getSeconds() + '')}.${padTime(Math.round(dateObject.getMilliseconds()/10) + '')}`;
+    return `${padTime(dateObject.getMinutes() + '')}:${padTime(dateObject.getSeconds() + '')}.${padTime(Math.floor(dateObject.getMilliseconds()/10) + '')}`;
 }
 
 const padTime = (time) => {
@@ -49,35 +75,53 @@ const padTime = (time) => {
 }
 
 const startTimer = () => {
+    running = true;
     mainStartTime = Date.now();
     lapStartTime = Date.now();
     if(!laps.length)
         createLap();
     animationRequestId = runTimerAnimation();
-    changeButton("Stop", "button--start-color", "button--stop-color", stopTimer, startStopButton);
-    changeButton("Lap", null, null, createLap, resetLapButton);
+    changeButton(buttonNames.START);
+    changeButton(buttonNames.RESET);
 }
 
 const runTimerAnimation = () => {
     const mainTimerDateObject = new Date(getElapsedMainTimeInMilliseconds());
     lapTimerDateObject = new Date(getElapsedLapTimeInMilliseconds());
-    setMainTimerDisplay(formatDateToString(mainTimerDateObject));
+    setMainTimerDisplay(formatDateToString(mainTimerDateObject));                
     setActiveLapTimeDisplay(formatDateToString(lapTimerDateObject));
     animationRequestId = requestAnimationFrame(runTimerAnimation);
 }
 
-const changeButton = (label, oldClass, newClass, func, button) => {
-    button.children[0].innerHTML = label;
-    button.onclick = func;
+const changeButton = (buttonName) => {
+    switch(buttonName) {
+        case(buttonNames.START) :
+            setButton(startStopButton, "Stop", "button--start-color", "button--stop-color");
+            break
+        case(buttonNames.STOP):
+            setButton(startStopButton, "Start", "button--stop-color", "button--start-color");
+            break
+        case(buttonNames.RESET):
+            setButton(resetLapButton, "Lap");
+            break
+        case(buttonNames.LAP):
+            setButton(resetLapButton, "Reset");
+            break
+    }
+}
+
+const setButton = (button, newLabel, oldClass, newClass) => {
+    button.children[0].innerHTML = newLabel;
     button.classList.replace(oldClass, newClass);
 }
 
 const stopTimer = () => {
+    running = false;
     mainSavedTime = getElapsedMainTimeInMilliseconds();
-    lapSavedTime = getElapsedLapTimeInMilliseconds();
+    activeLapSavedTime = getElapsedLapTimeInMilliseconds();
     cancelAnimationFrame(animationRequestId);
-    changeButton("Start", "button--stop-color", "button--start-color", startTimer, startStopButton);
-    changeButton("Reset", null, null, resetTimer, resetLapButton);
+    changeButton(buttonNames.STOP);
+    changeButton(buttonNames.LAP);
 }
 
 const resetTimer = () => {
@@ -87,6 +131,7 @@ const resetTimer = () => {
     lapCounter = 0;
     resetFastestAndSlowestLaps();
     setMainTimerDisplay(formatDateToString(zeroDate));
+    createEmptyLapBoxes();
 }
 
 const resetFastestAndSlowestLaps = () => {
@@ -96,15 +141,20 @@ const resetFastestAndSlowestLaps = () => {
 
 const createLap = () => {
     if(laps.length) {
-        recordLapTime();
+        fixPreviousLapTime();
         updateFastestAndSlowestLaps();
     }
+    removeEmptyLapBox();
     lapStartTime = Date.now();
     const lapBox = createLapBox()
     laps.unshift({splitTime: null, lapBox: lapBox});
     lapView.prepend(lapBox);
     lapCounter++;
-    lapSavedTime = 0;
+    activeLapSavedTime = 0;
+}
+
+const removeEmptyLapBox = () => {
+    emptyLapBoxes.length ? lapView.removeChild(emptyLapBoxes[0]) : null;
 }
 
 const createLapBox = () => {
@@ -116,7 +166,8 @@ const createLapBox = () => {
 
     lapLabelParagraph.appendChild(lapLabelText);
     lapTimeParagraph.appendChild(lapTimeText);
-    lapTimeParagraph.classList.add('lap-box__text');
+
+    lapTimeParagraph.classList.add('lap-box__text', 'lap-box__active-time');
     lapLabelParagraph.classList.add('lap-box__text');
 
     lapBox.appendChild(lapLabelParagraph);
@@ -126,8 +177,9 @@ const createLapBox = () => {
     return lapBox;
 }
 
-const recordLapTime = () => {
+const fixPreviousLapTime = () => {
     laps[0].splitTime = getElapsedLapTimeInMilliseconds();
+    document.getElementsByClassName('lap-box__active-time')[0].classList.remove('lap-box__active-time');
 }
 
 const updateFastestAndSlowestLaps = () => {
@@ -149,7 +201,7 @@ const updateFastestAndSlowestLaps = () => {
     else {
         Array.from(document.getElementsByClassName('lap-box--mask-color')).forEach((lap) => {
             lap.classList.remove('lap-box--mask-color');
-        })
+        });
     }
 }
 

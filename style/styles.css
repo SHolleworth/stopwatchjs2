@@ -26,15 +26,21 @@ body {
     background-color: var(--body-color);
 }
 
+h1, p {
+    user-select: none;
+}
+
 h1 {
     font-family: 'SF Pro Display Ultralight', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 50;
+    font-variant-numeric: tabular-nums;
 }
 
 p {
     font-family: 'SF Pro Text Thin', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: .75rem;
     font-weight: bold;
+    font-variant-numeric: tabular-nums;
 }
 
 #container {
@@ -51,7 +57,7 @@ p {
     justify-content: center;
     width: 300px;
     height: 600px;
-    padding: 10px;
+    padding: 0 5px 0 10px ;
     padding-bottom: 30px;
     border-radius: 10px;
     box-shadow: -5px 5px 5px var(--shadow-color);
@@ -66,7 +72,7 @@ p {
 }
 
 #clock-box h1 {
-    font-size: 4.5rem;
+    font-size: 4.3rem;
     color: white;
 }
 
@@ -86,6 +92,10 @@ p {
     height: 4.5rem;
     border-radius: 50%;
     border: double 5px black;
+}
+
+#start-stop-button {
+    margin-right: 5px;
 }
 
 .button--start-color {
@@ -142,6 +152,7 @@ p {
     border-color: var(--lap-border-color);
     overflow-y: auto;
     overflow-x: hidden;
+    padding-right: 10px;
     flex: 1;
 }
 
@@ -169,7 +180,7 @@ p {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px 0 10px;
+    padding: 0 5px 0 10px;
     border-top-width: 1px;
     border-top-style: solid;
     border-color: var(--lap-border-color);

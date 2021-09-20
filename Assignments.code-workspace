@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\css-assignment"
+		},
+		{
+			"path": "..\\experiments"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "stopwatchjs2"
+	}
+}
