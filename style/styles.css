@@ -64,14 +64,14 @@ p {
     background-color: black;
 }
 
-#clock-box {
+#main-timer-box {
     display: flex;
     justify-content: center;
     align-items: flex-end;
     flex: .9;
 }
 
-#clock-box h1 {
+#main-timer-box h1 {
     font-size: 4.3rem;
     color: white;
 }

@@ -18,13 +18,13 @@ let lapCounter = 0;
 let animationRequestId = null;
 let laps = [];
 let running = false;
-const buttonNames = {
+const BUTTONS = {
     START: 0,
     STOP: 1,
     RESET: 2,
     LAP: 3
 };
-Object.freeze(buttonNames);
+Object.freeze(BUTTONS);
 
 startStopButton.onclick = () => { running ? stopTimer() : startTimer() }
 resetLapButton.onclick = () => { running ? createLap() : resetTimer() }
@@ -32,22 +32,6 @@ resetLapButton.onclick = () => { running ? createLap() : resetTimer() }
 const initialise = () => {
     createEmptyLapBoxes()
     setMainTimerDisplay(formatDateToString(zeroDate));
-}
-
-const createEmptyLapBoxes = () => {
-    emptyLapBoxes.length ? clearRemainingEmptyLapBoxes() : null;
-    for(let i = 0; i < 7; i++) {
-        const emptyLapBox = document.createElement('div');
-        emptyLapBox.classList.add('lap-box', 'lap-box--empty');
-        lapView.appendChild(emptyLapBox);
-    }
-    emptyLapBoxes = document.getElementsByClassName('lap-box--empty');
-}
-
-const clearRemainingEmptyLapBoxes = () => {
-    Array.from(emptyLapBoxes).forEach((emptyLapBox) => {
-        lapView.removeChild(emptyLapBox);
-    })
 }
 
 const getElapsedMainTimeInMilliseconds = () => {
@@ -81,8 +65,8 @@ const startTimer = () => {
     if(!laps.length)
         createLap();
     animationRequestId = runTimerAnimation();
-    changeButton(buttonNames.START);
-    changeButton(buttonNames.RESET);
+    changeButton(BUTTONS.START);
+    changeButton(BUTTONS.RESET);
 }
 
 const runTimerAnimation = () => {
@@ -95,16 +79,16 @@ const runTimerAnimation = () => {
 
 const changeButton = (buttonName) => {
     switch(buttonName) {
-        case(buttonNames.START) :
+        case(BUTTONS.START) :
             setButton(startStopButton, "Stop", "button--start-color", "button--stop-color");
             break
-        case(buttonNames.STOP):
+        case(BUTTONS.STOP):
             setButton(startStopButton, "Start", "button--stop-color", "button--start-color");
             break
-        case(buttonNames.RESET):
+        case(BUTTONS.RESET):
             setButton(resetLapButton, "Lap");
             break
-        case(buttonNames.LAP):
+        case(BUTTONS.LAP):
             setButton(resetLapButton, "Reset");
             break
     }
@@ -120,8 +104,8 @@ const stopTimer = () => {
     mainSavedTime = getElapsedMainTimeInMilliseconds();
     activeLapSavedTime = getElapsedLapTimeInMilliseconds();
     cancelAnimationFrame(animationRequestId);
-    changeButton(buttonNames.STOP);
-    changeButton(buttonNames.LAP);
+    changeButton(BUTTONS.STOP);
+    changeButton(BUTTONS.LAP);
 }
 
 const resetTimer = () => {
@@ -151,6 +135,22 @@ const createLap = () => {
     lapView.prepend(lapBox);
     lapCounter++;
     activeLapSavedTime = 0;
+}
+
+const createEmptyLapBoxes = () => {
+    emptyLapBoxes.length ? clearRemainingEmptyLapBoxes() : null;
+    for(let i = 0; i < 7; i++) {
+        const emptyLapBox = document.createElement('div');
+        emptyLapBox.classList.add('lap-box', 'lap-box--empty');
+        lapView.appendChild(emptyLapBox);
+    }
+    emptyLapBoxes = document.getElementsByClassName('lap-box--empty');
+}
+
+const clearRemainingEmptyLapBoxes = () => {
+    Array.from(emptyLapBoxes).forEach((emptyLapBox) => {
+        lapView.removeChild(emptyLapBox);
+    })
 }
 
 const removeEmptyLapBox = () => {
