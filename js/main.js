@@ -110,7 +110,7 @@ const stopTimer = () => {
 
 const resetTimer = () => {
     mainSavedTime = 0;
-    laps.forEach((lap) => {lapView.removeChild(lap.lapBox)});
+    laps.forEach((lap) => { lapView.removeChild(lap.lapBox) });
     laps.length = 0;
     lapCounter = 0;
     resetFastestAndSlowestLaps();

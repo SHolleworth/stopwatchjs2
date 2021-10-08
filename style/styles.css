@@ -175,33 +175,33 @@ p {
     background-color: var(--scrollbar-thumb-active-color);
 }
 
-.lap-box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 5px 0 10px;
-    border-top-width: 1px;
-    border-top-style: solid;
-    border-color: var(--lap-border-color);
-    width: '100%';
-    height: 35px;
+.lap-box{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 5px 0 10px;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-color: var(--lap-border-color);
+	width: "100%";
+	height: 35px;
 }
 
-.lap-box__text {
-    display: inline-block;
-    font-weight: bold;
-    color: var(--normal-lap-color);
+.lap-box p {
+	display: inline-block;
+	font-weight: bold;
+	color: var(--normal-lap-color);
 }
 
 .lap-box--fast-color p {
-    color: var(--fast-lap-color);
+	color: var(--fast-lap-color);
 }
 
 .lap-box--slow-color p {
-    color: var(--slow-lap-color);
+	color: var(--slow-lap-color);
 }
 
 .lap-box--mask-color p {
-    color: var(--normal-lap-color)
+	color: var(--normal-lap-color);
 }
